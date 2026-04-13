@@ -1,0 +1,6 @@
+{
+  "name": "BannaTube PRO",
+  "description": "A professional video sharing platform similar to YouTube, featuring video uploads, public viewing, and user interactions.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["video-streaming", "user-authentication", "database-integration"]
+}
