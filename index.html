@@ -1,13 +1,491 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Google AI Studio App</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
-</html>
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CYBER_VAULT // NIGHT CITY</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;500;700&display=swap');
 
+        :root {
+            --neon-yellow: #fcee0a;
+            --neon-blue: #00f0ff;
+            --neon-red: #ff003c;
+            --bg-black: #050505;
+        }
+
+        body {
+            background-color: var(--bg-black);
+            color: var(--neon-yellow);
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+            background-image: 
+                linear-gradient(rgba(252, 238, 10, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(252, 238, 10, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        h1, h2, h3, .cyber-font {
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .glitch-text {
+            text-shadow: 2px 0 var(--neon-red), -2px 0 var(--neon-blue);
+            animation: glitch 3s infinite;
+        }
+
+        @keyframes glitch {
+            0% { text-shadow: 2px 0 var(--neon-red), -2px 0 var(--neon-blue); }
+            50% { text-shadow: -2px 0 var(--neon-red), 2px 0 var(--neon-blue); }
+            100% { text-shadow: 2px 0 var(--neon-red), -2px 0 var(--neon-blue); }
+        }
+
+        .cyber-border {
+            border: 2px solid var(--neon-yellow);
+            clip-path: polygon(0 0, 100% 0, 100% 85%, 95% 100%, 0 100%);
+            box-shadow: 0 0 15px rgba(252, 238, 10, 0.2);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .cyber-button {
+            background: var(--neon-yellow);
+            color: black;
+            font-weight: 900;
+            padding: 10px 25px;
+            clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-button:hover {
+            background: white;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px white;
+        }
+
+        .cyber-input {
+            background: rgba(20, 20, 20, 0.8);
+            border-left: 4px solid var(--neon-yellow);
+            padding: 12px;
+            color: var(--neon-yellow);
+            width: 100%;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .cyber-input:focus {
+            background: rgba(40, 40, 40, 0.9);
+            box-shadow: inset 0 0 10px rgba(252, 238, 10, 0.2);
+        }
+
+        .gallery-card {
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(252, 238, 10, 0.1);
+        }
+
+        .gallery-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--neon-yellow);
+            box-shadow: 0 10px 30px rgba(252, 238, 10, 0.15);
+        }
+
+        .scanline {
+            width: 100%;
+            height: 2px;
+            background: rgba(252, 238, 10, 0.1);
+            position: fixed;
+            z-index: 100;
+            top: 0;
+            pointer-events: none;
+            animation: scanline 8s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .hidden-view { display: none; }
+        
+        .loading-bar-container {
+            width: 100%;
+            height: 4px;
+            background: #1a1a1a;
+            margin-top: 10px;
+        }
+        
+        .loading-bar-fill {
+            height: 100%;
+            background: var(--neon-yellow);
+            width: 0%;
+            transition: width 0.5s;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: var(--neon-yellow); }
+    </style>
+</head>
+<body>
+    <div class="scanline"></div>
+
+    <!-- HEADER -->
+    <header class="p-6 border-b-2 border-yellow-400/30 flex justify-between items-center sticky top-0 bg-black/80 z-50 backdrop-blur-md">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 bg-yellow-400 text-black flex items-center justify-center font-black text-2xl italic cyber-font">V</div>
+            <div>
+                <h1 class="text-xl md:text-2xl glitch-text font-black">Cyber_Vault 2077</h1>
+                <p class="text-[10px] opacity-50 tracking-[3px]">Dátová centrála Night City</p>
+            </div>
+        </div>
+        <div id="user-info" class="hidden flex items-center gap-4">
+            <div class="text-right hidden md:block">
+                <p id="display-email" class="text-xs font-bold uppercase"></p>
+                <p id="storage-status" class="text-[9px] text-blue-400"></p>
+            </div>
+            <button onclick="logout()" class="text-red-500 hover:scale-110 transition-transform">
+                <i class="fas fa-power-off text-xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8 min-h-[80vh]">
+        
+        <!-- AUTH VIEW -->
+        <section id="view-auth" class="max-w-md mx-auto mt-12 animate-fadeIn">
+            <div class="cyber-border p-8">
+                <h2 class="text-3xl font-black mb-8 italic border-b-4 border-yellow-400 inline-block">Prístup_Povolený?</h2>
+                <div class="space-y-6">
+                    <div>
+                        <label class="block text-xs uppercase opacity-60 mb-2">Identifikačný Email</label>
+                        <input type="email" id="auth-email" class="cyber-input" placeholder="V@NIGHTCITY.IO">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase opacity-60 mb-2">Neurálny Kľúč</label>
+                        <input type="password" id="auth-pass" class="cyber-input" placeholder="********">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase opacity-60 mb-2">Protokol Úložiska</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="setStorage('local')" id="btn-local" class="p-2 text-[10px] border border-yellow-400 bg-yellow-400 text-black font-bold">LOCAL_DB (Indexed)</button>
+                            <button onclick="setStorage('cloud')" id="btn-cloud" class="p-2 text-[10px] border border-yellow-400 text-yellow-400 font-bold opacity-50">CLOUD_DB (Firebase)</button>
+                        </div>
+                    </div>
+                    <button onclick="handleAuth()" class="cyber-button w-full mt-4 group">
+                        Iniciovať_Linku <i class="fas fa-arrow-right ml-2 group-hover:translate-x-2 transition-transform"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VERIFICATION VIEW -->
+        <section id="view-verification" class="hidden-view max-w-2xl mx-auto text-center mt-12">
+            <div class="mb-8 relative inline-block">
+                <i class="fas fa-user-shield text-7xl text-yellow-400 animate-pulse"></i>
+                <div class="absolute inset-0 blur-2xl bg-yellow-400/20"></div>
+            </div>
+            <h2 class="text-4xl font-black mb-4 italic glitch-text">Skenovanie_Malvéru...</h2>
+            <div class="cyber-border p-10 bg-gray-900/50">
+                <div class="flex justify-center items-center gap-6 mb-8">
+                    <i class="fas fa-hourglass-half text-2xl text-yellow-400"></i>
+                    <span class="text-3xl font-bold font-mono tracking-widest text-white" id="countdown">23:59:59</span>
+                </div>
+                <p class="text-lg opacity-80 leading-relaxed mb-8">
+                    Systém analyzuje integritu vášho digitálneho vedomia. Galéria bude sprístupnená po overení biologického pôvodu (24h).
+                    <br><br>
+                    <span class="text-red-500 font-bold uppercase italic">Varovanie:</span> Detekcia automatizovaných skriptov (botov) vyústi v okamžitú deaktiváciu účtu.
+                </p>
+                <div class="loading-bar-container">
+                    <div class="loading-bar-fill" style="width: 35%"></div>
+                </div>
+                <div class="mt-4 flex justify-between text-[10px] uppercase opacity-40 font-bold">
+                    <span>Packet_Analysis: 100%</span>
+                    <span>Bot_Heuristics: In_Progress</span>
+                    <span>Neural_Link: Stable</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- BANNED VIEW -->
+        <section id="view-banned" class="hidden-view max-w-2xl mx-auto mt-12">
+            <div class="border-4 border-red-600 p-1">
+                <div class="bg-red-600/10 border border-red-600 p-10 text-center">
+                    <i class="fas fa-skull-crossbones text-7xl text-red-600 mb-6"></i>
+                    <h2 class="text-5xl font-black text-red-600 mb-4 italic cyber-font">DEAKTIVOVANÝ</h2>
+                    <p class="text-xl text-white mb-8 font-bold">
+                        Váš profil bol označený ako <span class="bg-red-600 px-2 text-black">BOT_SIMULATION</span>.
+                        NetWatch zablokoval všetky vaše prístupové body.
+                    </p>
+                    <div class="space-y-4">
+                        <textarea id="appeal-text" class="cyber-input border-red-600 bg-red-900/10 h-32 focus:border-red-400" placeholder="Podajte odvolanie proti rozhodnutiu..."></textarea>
+                        <button onclick="sendAppeal()" class="w-full bg-red-600 text-white p-4 font-black uppercase hover:bg-white hover:text-red-600 transition-all flex items-center justify-center gap-3">
+                            <i class="fas fa-paper-plane"></i> Odoslať odvolanie do Night City Admin
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GALLERY VIEW -->
+        <section id="view-gallery" class="hidden-view space-y-10">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <h2 class="text-5xl font-black italic glitch-text underline decoration-yellow-400 underline-offset-8">Vault_01</h2>
+                    <p class="text-xs opacity-50 mt-4 uppercase tracking-widest"><i class="fas fa-link mr-2"></i> Šifrovaný Neurálny Kanál Aktívny</p>
+                </div>
+                <button onclick="openModal()" class="cyber-button text-lg">
+                    <i class="fas fa-plus-circle mr-2"></i> Nahrať_Objekt
+                </button>
+            </div>
+
+            <!-- FILTERS -->
+            <div class="flex gap-4 border-b border-white/10 pb-4 overflow-x-auto">
+                <button onclick="filterItems('all')" class="text-xs font-bold uppercase hover:text-white px-3 py-1 border-b-2 border-yellow-400">Všetko</button>
+                <button onclick="filterItems('image')" class="text-xs font-bold uppercase opacity-50 hover:opacity-100 px-3 py-1">Obrazy</button>
+                <button onclick="filterItems('video')" class="text-xs font-bold uppercase opacity-50 hover:opacity-100 px-3 py-1">Videa</button>
+                <button onclick="filterItems('text')" class="text-xs font-bold uppercase opacity-50 hover:opacity-100 px-3 py-1">Súbory</button>
+            </div>
+
+            <!-- GRID -->
+            <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <!-- Items injected here -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- UPLOAD MODAL -->
+    <div id="upload-modal" class="fixed inset-0 bg-black/95 backdrop-blur-xl hidden z-[100] p-4 flex items-center justify-center">
+        <div class="cyber-border w-full max-w-xl p-8 bg-gray-900 relative">
+            <button onclick="closeModal()" class="absolute top-4 right-6 text-2xl hover:text-red-500">×</button>
+            <h2 class="text-2xl font-black italic mb-8 border-l-4 border-yellow-400 pl-4 uppercase">Sekvencia_Nahrávania</h2>
+            
+            <div class="space-y-6">
+                <div class="flex gap-2">
+                    <button onclick="setUploadType('image')" id="up-img" class="flex-1 p-2 text-[10px] font-bold border border-yellow-400 bg-yellow-400 text-black">IMAGE</button>
+                    <button onclick="setUploadType('video')" id="up-vid" class="flex-1 p-2 text-[10px] font-bold border border-yellow-400 text-yellow-400">VIDEO</button>
+                    <button onclick="setUploadType('text')" id="up-txt" class="flex-1 p-2 text-[10px] font-bold border border-yellow-400 text-yellow-400">TEXT</button>
+                </div>
+
+                <input type="text" id="obj-title" class="cyber-input" placeholder="NÁZOV_OBJEKTU">
+                <textarea id="obj-content" class="cyber-input h-32" placeholder="DATA_URL alebo RAW_TEXT..."></textarea>
+                
+                <button onclick="saveItem()" class="cyber-button w-full py-4 text-xl mt-4">
+                    POTVRDIŤ_UPLOAD
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, onSnapshot, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'cyber-vault-v2';
+
+        let currentUser = null;
+        let storageMode = 'local';
+        let uploadType = 'image';
+
+        // Globálne funkcie pre tlačidlá
+        window.setStorage = (mode) => {
+            storageMode = mode;
+            document.getElementById('btn-local').className = mode === 'local' ? 'p-2 text-[10px] border border-yellow-400 bg-yellow-400 text-black font-bold' : 'p-2 text-[10px] border border-yellow-400 text-yellow-400 font-bold opacity-50';
+            document.getElementById('btn-cloud').className = mode === 'cloud' ? 'p-2 text-[10px] border border-yellow-400 bg-yellow-400 text-black font-bold' : 'p-2 text-[10px] border border-yellow-400 text-yellow-400 font-bold opacity-50';
+        };
+
+        window.setUploadType = (type) => {
+            uploadType = type;
+            const types = ['img', 'vid', 'txt'];
+            types.forEach(t => {
+                const el = document.getElementById(`up-${t}`);
+                if (`up-${t}` === `up-${type.substring(0,3)}`) {
+                    el.className = 'flex-1 p-2 text-[10px] font-bold border border-yellow-400 bg-yellow-400 text-black';
+                } else {
+                    el.className = 'flex-1 p-2 text-[10px] font-bold border border-yellow-400 text-yellow-400';
+                }
+            });
+        };
+
+        window.handleAuth = async () => {
+            const email = document.getElementById('auth-email').value;
+            if (!email) return alert("Zadajte email!");
+            
+            // Simulácia registrácie/loginu cez Firestore profil
+            const uid = auth.currentUser.uid;
+            const regData = {
+                email,
+                storageMode,
+                registeredAt: Date.now(),
+                status: 'pending' // pending, verified, banned
+            };
+
+            await setDoc(doc(db, 'artifacts', appId, 'users', uid, 'profile', 'settings'), regData);
+            checkUserStatus(regData);
+        };
+
+        window.logout = () => {
+            location.reload();
+        };
+
+        window.openModal = () => document.getElementById('upload-modal').classList.remove('hidden');
+        window.closeModal = () => document.getElementById('upload-modal').classList.add('hidden');
+
+        // IndexedDB
+        const initIDB = () => {
+            return new Promise((res) => {
+                const req = indexedDB.open("NC_Vault", 1);
+                req.onupgradeneeded = (e) => e.target.result.createObjectStore("items", { keyPath: "id", autoIncrement: true });
+                req.onsuccess = () => res(req.result);
+            });
+        };
+
+        window.saveItem = async () => {
+            const title = document.getElementById('obj-title').value;
+            const content = document.getElementById('obj-content').value;
+            if(!title || !content) return alert("Dáta chýbajú!");
+
+            const item = { title, content, type: uploadType, timestamp: Date.now() };
+
+            if(storageMode === 'cloud') {
+                await addDoc(collection(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'gallery'), item);
+            } else {
+                const idb = await initIDB();
+                const tx = idb.transaction("items", "readwrite");
+                tx.objectStore("items").add(item);
+            }
+            
+            closeModal();
+            loadGallery();
+        };
+
+        const loadGallery = async () => {
+            const grid = document.getElementById('gallery-grid');
+            grid.innerHTML = '<div class="col-span-full text-center py-10 opacity-30 cyber-font">Načítavam_Dáta...</div>';
+            
+            let items = [];
+            if(storageMode === 'cloud') {
+                const q = query(collection(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'gallery'));
+                // Používame onSnapshot pre real-time v cloude
+                onSnapshot(q, (snap) => {
+                    renderItems(snap.docs.map(d => ({...d.data(), id: d.id})));
+                });
+            } else {
+                const idb = await initIDB();
+                const tx = idb.transaction("items", "readonly");
+                const req = tx.objectStore("items").getAll();
+                req.onsuccess = () => renderItems(req.result);
+            }
+        };
+
+        const renderItems = (items) => {
+            const grid = document.getElementById('gallery-grid');
+            grid.innerHTML = items.length === 0 ? '<div class="col-span-full text-center py-10 opacity-30 cyber-font">SEKTOR_PRÁZDNY</div>' : '';
+            
+            items.sort((a,b) => b.timestamp - a.timestamp).forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'gallery-card cyber-border overflow-hidden relative group';
+                
+                let mediaHtml = '';
+                if(item.type === 'image') mediaHtml = `<img src="${item.content}" class="w-full h-48 object-cover grayscale group-hover:grayscale-0 transition-all duration-500">`;
+                else if(item.type === 'video') mediaHtml = `<video src="${item.content}" class="w-full h-48 object-cover"></video><div class="absolute inset-0 flex items-center justify-center pointer-events-none"><i class="fas fa-play text-4xl opacity-50"></i></div>`;
+                else mediaHtml = `<div class="w-full h-48 flex items-center justify-center bg-yellow-400/5 p-6 italic text-sm overflow-hidden text-center">"${item.content.substring(0,100)}..."</div>`;
+
+                div.innerHTML = `
+                    ${mediaHtml}
+                    <div class="p-4 bg-black/90">
+                        <h3 class="font-bold text-sm truncate">${item.title}</h3>
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-[9px] opacity-40 uppercase tracking-tighter">${new Date(item.timestamp).toLocaleString()}</span>
+                            <span class="text-[9px] px-2 bg-yellow-400 text-black font-black uppercase">${item.type}</span>
+                        </div>
+                    </div>
+                    <div class="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button class="bg-red-600 text-white p-1 text-[10px]"><i class="fas fa-trash"></i></button>
+                    </div>
+                `;
+                grid.appendChild(div);
+            });
+        };
+
+        const checkUserStatus = (data) => {
+            const views = ['auth', 'verification', 'banned', 'gallery'];
+            views.forEach(v => document.getElementById(`view-${v}`).classList.add('hidden-view'));
+            
+            document.getElementById('user-info').classList.remove('hidden');
+            document.getElementById('display-email').innerText = data.email;
+            document.getElementById('storage-status').innerText = `SYSTEM_MODE: ${data.storageMode.toUpperCase()}`;
+
+            if(data.status === 'banned') {
+                document.getElementById('view-banned').classList.remove('hidden-view');
+            } else if(data.status === 'verified') {
+                document.getElementById('view-gallery').classList.remove('hidden-view');
+                loadGallery();
+            } else {
+                document.getElementById('view-verification').classList.remove('hidden-view');
+                startCountdown(data.registeredAt);
+            }
+        };
+
+        const startCountdown = (regTime) => {
+            const target = regTime + (24 * 60 * 60 * 1000);
+            const timer = setInterval(() => {
+                const now = Date.now();
+                const diff = target - now;
+                
+                if(diff <= 0) {
+                    clearInterval(timer);
+                    // Simulácia prechodu po 24h
+                    const isBot = Math.random() > 0.95; // 5% šanca na ban
+                    finalizeUser(isBot);
+                } else {
+                    const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
+                    const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+                    const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+                    document.getElementById('countdown').innerText = `${h}:${m}:${s}`;
+                    
+                    // Progress bar simulácia
+                    const elapsed = now - regTime;
+                    const total = 24 * 60 * 60 * 1000;
+                    document.querySelector('.loading-bar-fill').style.width = (elapsed/total * 100) + '%';
+                }
+            }, 1000);
+        };
+
+        const finalizeUser = async (isBot) => {
+            const uid = auth.currentUser.uid;
+            const status = isBot ? 'banned' : 'verified';
+            await setDoc(doc(db, 'artifacts', appId, 'users', uid, 'profile', 'settings'), { status }, { merge: true });
+            location.reload();
+        };
+
+        // Init App
+        window.onload = async () => {
+            await signInAnonymously(auth);
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    const docSnap = await getDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'settings'));
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        storageMode = data.storageMode;
+                        checkUserStatus(data);
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>
