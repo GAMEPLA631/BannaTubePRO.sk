@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="sk">
 <head>
@@ -22,9 +23,21 @@
             font-family: 'Rajdhani', sans-serif;
             overflow-x: hidden;
             background-image: 
-                linear-gradient(rgba(252, 238, 10, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(252, 238, 10, 0.03) 1px, transparent 1px);
+                linear-gradient(rgba(252, 238, 10, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(252, 238, 10, 0.04) 1px, transparent 1px);
             background-size: 30px 30px;
+        }
+
+        /* Subtílny CRT efekt pre celý dokument */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
         }
 
         h1, h2, h3, .cyber-font {
@@ -39,50 +52,72 @@
         }
 
         @keyframes glitch {
-            0% { text-shadow: 2px 0 var(--neon-red), -2px 0 var(--neon-blue); }
+            0%, 100% { text-shadow: 2px 0 var(--neon-red), -2px 0 var(--neon-blue); }
             50% { text-shadow: -2px 0 var(--neon-red), 2px 0 var(--neon-blue); }
-            100% { text-shadow: 2px 0 var(--neon-red), -2px 0 var(--neon-blue); }
+            10% { text-shadow: 2px 0 var(--neon-red), 2px 0 var(--neon-blue); }
         }
 
         .cyber-border {
-            border: 2px solid var(--neon-yellow);
+            border: 1px solid var(--neon-yellow);
             clip-path: polygon(0 0, 100% 0, 100% 85%, 95% 100%, 0 100%);
-            box-shadow: 0 0 15px rgba(252, 238, 10, 0.2);
-            background: rgba(0, 0, 0, 0.8);
+            box-shadow: 0 0 15px rgba(252, 238, 10, 0.15);
+            background: rgba(10, 10, 10, 0.85);
             backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        /* Detail rohu na cyber-border */
+        .cyber-border::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            background: var(--neon-yellow);
+            clip-path: polygon(100% 0, 100% 100%, 0 100%);
         }
 
         .cyber-button {
             background: var(--neon-yellow);
             color: black;
             font-weight: 900;
-            padding: 10px 25px;
+            padding: 12px 25px;
             clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
             cursor: pointer;
+            border: none;
         }
 
         .cyber-button:hover {
             background: white;
-            transform: scale(1.05);
-            box-shadow: 0 0 20px white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.4);
         }
 
         .cyber-input {
-            background: rgba(20, 20, 20, 0.8);
+            background: rgba(20, 20, 20, 0.9);
+            border: 1px solid rgba(252, 238, 10, 0.2);
             border-left: 4px solid var(--neon-yellow);
-            padding: 12px;
-            color: var(--neon-yellow);
+            padding: 14px;
+            color: white;
             width: 100%;
             outline: none;
             transition: 0.3s;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 500;
         }
 
         .cyber-input:focus {
-            background: rgba(40, 40, 40, 0.9);
-            box-shadow: inset 0 0 10px rgba(252, 238, 10, 0.2);
+            background: rgba(30, 30, 30, 0.9);
+            border-color: var(--neon-yellow);
+            box-shadow: 0 0 15px rgba(252, 238, 10, 0.2);
+        }
+
+        .cyber-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
         }
 
         .gallery-card {
@@ -93,32 +128,36 @@
         .gallery-card:hover {
             transform: translateY(-10px) scale(1.02);
             border-color: var(--neon-yellow);
-            box-shadow: 0 10px 30px rgba(252, 238, 10, 0.15);
+            box-shadow: 0 15px 35px rgba(252, 238, 10, 0.2);
+            z-index: 10;
         }
 
         .scanline {
             width: 100%;
-            height: 2px;
-            background: rgba(252, 238, 10, 0.1);
+            height: 4px;
+            background: rgba(252, 238, 10, 0.15);
             position: fixed;
             z-index: 100;
             top: 0;
             pointer-events: none;
-            animation: scanline 8s linear infinite;
+            animation: scanline 6s linear infinite;
+            box-shadow: 0 0 10px rgba(252, 238, 10, 0.2);
         }
 
         @keyframes scanline {
-            0% { top: 0; }
-            100% { top: 100%; }
+            0% { top: -10%; }
+            100% { top: 110%; }
         }
 
         .hidden-view { display: none !important; }
         
         .loading-bar-container {
             width: 100%;
-            height: 4px;
+            height: 6px;
             background: #1a1a1a;
-            margin-top: 10px;
+            margin-top: 15px;
+            border-radius: 3px;
+            overflow: hidden;
         }
         
         .loading-bar-fill {
@@ -126,9 +165,41 @@
             background: var(--neon-yellow);
             width: 0%;
             transition: width 0.5s;
+            box-shadow: 0 0 10px var(--neon-yellow);
         }
 
-        ::-webkit-scrollbar { width: 5px; }
+        /* Custom Alert System */
+        #cyber-alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            padding: 15px 25px;
+            background: rgba(10, 10, 10, 0.95);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px;
+            clip-path: polygon(0 0, 100% 0, 100% 80%, 90% 100%, 0 100%);
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(5px);
+        }
+        
+        #cyber-alert.show {
+            transform: translateX(0);
+        }
+
+        #cyber-alert.error {
+            border-left: 5px solid var(--neon-red);
+            box-shadow: 0 0 20px rgba(255, 0, 60, 0.4);
+        }
+
+        #cyber-alert.success {
+            border-left: 5px solid var(--neon-yellow);
+            box-shadow: 0 0 20px rgba(252, 238, 10, 0.4);
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #050505; }
         ::-webkit-scrollbar-thumb { background: var(--neon-yellow); }
     </style>
@@ -136,48 +207,60 @@
 <body>
     <div class="scanline"></div>
 
+    <!-- CUSTOM ALERT -->
+    <div id="cyber-alert">
+        <i class="fas fa-exclamation-triangle mr-2"></i> <span id="cyber-alert-msg">Chyba systému</span>
+    </div>
+
     <!-- HEADER -->
-    <header class="p-6 border-b-2 border-yellow-400/30 flex justify-between items-center sticky top-0 bg-black/80 z-50 backdrop-blur-md">
+    <header class="p-6 border-b border-yellow-400/30 flex justify-between items-center sticky top-0 bg-black/90 z-50 backdrop-blur-md">
         <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-yellow-400 text-black flex items-center justify-center font-black text-2xl italic cyber-font">V</div>
+            <div class="w-12 h-12 bg-yellow-400 text-black flex items-center justify-center font-black text-2xl italic cyber-font shadow-[0_0_15px_rgba(252,238,10,0.4)]">V</div>
             <div>
                 <h1 class="text-xl md:text-2xl glitch-text font-black">Cyber_Vault 2077</h1>
-                <p class="text-[10px] opacity-50 tracking-[3px]">Lokálna Databáza Night City</p>
+                <p class="text-[10px] opacity-60 tracking-[3px] text-white">LOKÁLNA DATABÁZA NIGHT CITY</p>
             </div>
         </div>
-        <div id="user-info" class="hidden flex items-center gap-4">
+        <div id="user-info" class="hidden flex items-center gap-6">
             <div class="text-right hidden md:block">
-                <p id="display-email" class="text-xs font-bold uppercase"></p>
-                <p class="text-[9px] text-blue-400">STATUS: PRIPOJENÝ K VAULTU</p>
+                <p id="display-email" class="text-xs font-bold uppercase text-white"></p>
+                <p class="text-[10px] text-cyan-400 font-bold tracking-widest mt-1">STATUS: ONLINE</p>
             </div>
-            <button onclick="logout()" class="text-red-500 hover:scale-110 transition-transform cursor-pointer">
-                <i class="fas fa-power-off text-xl"></i>
+            <button onclick="logout()" class="text-red-500 hover:text-red-400 hover:scale-110 transition-all cursor-pointer">
+                <i class="fas fa-power-off text-2xl drop-shadow-[0_0_8px_rgba(255,0,60,0.6)]"></i>
             </button>
         </div>
     </header>
 
-    <main class="container mx-auto p-4 md:p-8 min-h-[80vh]">
+    <main class="container mx-auto p-4 md:p-8 min-h-[80vh] relative z-10">
         
         <!-- AUTH VIEW (Login/Register) -->
-        <section id="view-auth" class="max-w-md mx-auto mt-12">
+        <section id="view-auth" class="max-w-md mx-auto mt-16">
             <div class="cyber-border p-8">
-                <h2 class="text-3xl font-black mb-8 italic border-b-4 border-yellow-400 inline-block">Prístup_Povolený?</h2>
+                
+                <!-- Auth Tabs (Nové, lepšie ovládanie) -->
+                <div class="flex border-b border-yellow-400/20 mb-8">
+                    <button id="tab-login" onclick="switchAuthMode('login')" class="flex-1 pb-3 text-sm font-bold cyber-font text-yellow-400 border-b-2 border-yellow-400 transition-colors">
+                        PRIHLÁSENIE
+                    </button>
+                    <button id="tab-register" onclick="switchAuthMode('register')" class="flex-1 pb-3 text-sm font-bold cyber-font text-gray-500 border-b-2 border-transparent hover:text-yellow-400/70 transition-colors">
+                        REGISTRÁCIA
+                    </button>
+                </div>
+
                 <div class="space-y-6">
                     <div>
-                        <label class="block text-xs uppercase opacity-60 mb-2">Identifikačný Email</label>
+                        <label class="block text-[10px] font-bold uppercase opacity-60 mb-2 tracking-widest text-white">Identifikačný Email</label>
                         <input type="email" id="auth-email" class="cyber-input" placeholder="V@NIGHTCITY.IO">
                     </div>
                     <div>
-                        <label class="block text-xs uppercase opacity-60 mb-2">Neurálny Kľúč</label>
-                        <input type="password" id="auth-pass" class="cyber-input" placeholder="********">
+                        <label class="block text-[10px] font-bold uppercase opacity-60 mb-2 tracking-widest text-white">Neurálny Kľúč</label>
+                        <input type="password" id="auth-pass" class="cyber-input" placeholder="••••••••">
                     </div>
                     
-                    <div class="flex flex-col gap-3 pt-4">
-                        <button id="auth-submit-btn" onclick="handleAuth('login')" class="cyber-button w-full group">
-                            PRIHLÁSIŤ_SA <i class="fas fa-sign-in-alt ml-2"></i>
-                        </button>
-                        <button onclick="handleAuth('register')" class="text-[10px] uppercase font-bold text-center opacity-50 hover:opacity-100 transition-opacity">
-                            Nemáte profil? Vytvoriť novú linku v databáze
+                    <div class="pt-6">
+                        <button id="auth-submit-btn" onclick="executeAuth()" class="cyber-button w-full text-lg flex items-center justify-center gap-3">
+                            <span>INICIALIZOVAŤ_SPOJENIE</span> <i class="fas fa-sign-in-alt"></i>
                         </button>
                     </div>
                 </div>
@@ -185,19 +268,18 @@
         </section>
 
         <!-- VERIFICATION VIEW -->
-        <section id="view-verification" class="hidden-view max-w-2xl mx-auto text-center mt-12">
-            <div class="mb-8 relative inline-block">
-                <i class="fas fa-user-shield text-7xl text-yellow-400 animate-pulse"></i>
-                <div class="absolute inset-0 blur-2xl bg-yellow-400/20"></div>
+        <section id="view-verification" class="hidden-view max-w-2xl mx-auto text-center mt-20">
+            <div class="mb-10 relative inline-block">
+                <i class="fas fa-user-shield text-7xl text-yellow-400 animate-pulse drop-shadow-[0_0_20px_rgba(252,238,10,0.6)]"></i>
             </div>
-            <h2 class="text-4xl font-black mb-4 italic glitch-text">Skenovanie_Malvéru...</h2>
-            <div class="cyber-border p-10 bg-gray-900/50">
+            <h2 class="text-4xl font-black mb-6 italic glitch-text">Skenovanie_Malvéru...</h2>
+            <div class="cyber-border p-10 bg-black/60">
                 <div class="flex justify-center items-center gap-6 mb-8">
-                    <i class="fas fa-hourglass-half text-2xl text-yellow-400"></i>
-                    <span class="text-3xl font-bold font-mono tracking-widest text-white" id="countdown">23:59:59</span>
+                    <i class="fas fa-hourglass-half text-2xl text-yellow-400 animate-spin" style="animation-duration: 3s;"></i>
+                    <span class="text-4xl font-bold font-mono tracking-widest text-white" id="countdown">23:59:59</span>
                 </div>
-                <p class="text-lg opacity-80 leading-relaxed mb-8">
-                    Systém analyzuje integritu vášho digitálneho vedomia v lokálnej databáze. Galéria bude sprístupnená po overení (24h).
+                <p class="text-md opacity-70 leading-relaxed mb-8 text-white font-medium max-w-lg mx-auto">
+                    Systém analyzuje integritu vášho digitálneho vedomia v lokálnej databáze. Galéria bude sprístupnená po overení bezpečnostného protokolu (24h).
                 </p>
                 <div class="loading-bar-container">
                     <div class="loading-bar-fill" id="loading-bar"></div>
@@ -207,13 +289,13 @@
 
         <!-- GALLERY VIEW -->
         <section id="view-gallery" class="hidden-view space-y-10">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-yellow-400/20 pb-6">
                 <div>
-                    <h2 class="text-5xl font-black italic glitch-text underline decoration-yellow-400 underline-offset-8">Vault_01</h2>
-                    <p class="text-xs opacity-50 mt-4 uppercase tracking-widest"><i class="fas fa-link mr-2"></i> Lokálne Šifrované Úložisko</p>
+                    <h2 class="text-5xl font-black italic glitch-text">Vault_01</h2>
+                    <p class="text-[10px] text-white opacity-60 mt-3 uppercase tracking-[4px] font-bold"><i class="fas fa-link mr-2 text-yellow-400"></i> Lokálne Šifrované Úložisko</p>
                 </div>
-                <button onclick="openModal()" class="cyber-button text-lg">
-                    <i class="fas fa-plus-circle mr-2"></i> Nahrať_Objekt
+                <button onclick="openModal()" class="cyber-button text-lg flex items-center gap-2">
+                    <i class="fas fa-plus-circle"></i> Nahrať_Objekt
                 </button>
             </div>
 
@@ -225,22 +307,29 @@
     </main>
 
     <!-- UPLOAD MODAL -->
-    <div id="upload-modal" class="fixed inset-0 bg-black/95 backdrop-blur-xl hidden z-[100] p-4 flex items-center justify-center">
-        <div class="cyber-border w-full max-w-xl p-8 bg-gray-900 relative">
-            <button onclick="closeModal()" class="absolute top-4 right-6 text-2xl hover:text-red-500 cursor-pointer">×</button>
+    <div id="upload-modal" class="fixed inset-0 bg-black/95 backdrop-blur-md hidden z-[100] p-4 flex items-center justify-center">
+        <div class="cyber-border w-full max-w-xl p-8 bg-[#0a0a0a]">
+            <button onclick="closeModal()" class="absolute top-4 right-6 text-3xl text-gray-500 hover:text-red-500 transition-colors cursor-pointer">&times;</button>
             <h2 class="text-2xl font-black italic mb-8 border-l-4 border-yellow-400 pl-4 uppercase">Sekvencia_Nahrávania</h2>
             
             <div class="space-y-6">
-                <div class="flex gap-2">
-                    <button onclick="setUploadType('image')" id="up-img" class="flex-1 p-2 text-[10px] font-bold border border-yellow-400 bg-yellow-400 text-black">IMAGE</button>
-                    <button onclick="setUploadType('video')" id="up-vid" class="flex-1 p-2 text-[10px] font-bold border border-yellow-400 text-yellow-400">VIDEO</button>
-                    <button onclick="setUploadType('text')" id="up-txt" class="flex-1 p-2 text-[10px] font-bold border border-yellow-400 text-yellow-400">TEXT</button>
+                <div class="flex gap-3">
+                    <button onclick="setUploadType('image')" id="up-img" class="flex-1 p-3 text-xs font-black tracking-widest border border-yellow-400 bg-yellow-400 text-black transition-all">IMAGE</button>
+                    <button onclick="setUploadType('video')" id="up-vid" class="flex-1 p-3 text-xs font-black tracking-widest border border-yellow-400 text-yellow-400 hover:bg-yellow-400/10 transition-all">VIDEO</button>
+                    <button onclick="setUploadType('text')" id="up-txt" class="flex-1 p-3 text-xs font-black tracking-widest border border-yellow-400 text-yellow-400 hover:bg-yellow-400/10 transition-all">TEXT</button>
                 </div>
 
-                <input type="text" id="obj-title" class="cyber-input" placeholder="NÁZOV_OBJEKTU">
-                <textarea id="obj-content" class="cyber-input h-32" placeholder="Vložte URL alebo text..."></textarea>
+                <div>
+                    <label class="block text-[10px] font-bold uppercase opacity-60 mb-2 tracking-widest text-white">Označenie dát</label>
+                    <input type="text" id="obj-title" class="cyber-input" placeholder="NÁZOV_OBJEKTU">
+                </div>
                 
-                <button onclick="saveItem()" class="cyber-button w-full py-4 text-xl mt-4">
+                <div>
+                    <label class="block text-[10px] font-bold uppercase opacity-60 mb-2 tracking-widest text-white">Zdroj / Obsah</label>
+                    <textarea id="obj-content" class="cyber-input h-32 resize-none" placeholder="Vložte URL alebo text..."></textarea>
+                </div>
+                
+                <button onclick="saveItem()" class="cyber-button w-full py-4 text-xl mt-4 tracking-widest">
                     POTVRDIŤ_UPLOAD
                 </button>
             </div>
@@ -250,12 +339,34 @@
     <script>
         /**
          * LOKÁLNA DATABÁZA VÝKONU (IndexedDB)
-         * Nahrádza Firebase/Firestore pre maximálnu rýchlosť a offline funkčnosť.
          */
         
         let db;
         let currentUser = null;
         let uploadType = 'image';
+        let currentAuthMode = 'login'; // Nová premenná pre stav prihlasovania
+
+        // Custom Notifikačný systém
+        const showCyberAlert = (message, type = 'error') => {
+            const alertBox = document.getElementById('cyber-alert');
+            const msgSpan = document.getElementById('cyber-alert-msg');
+            const icon = alertBox.querySelector('i');
+            
+            msgSpan.innerText = message;
+            
+            alertBox.className = type === 'error' ? 'error' : 'success';
+            alertBox.classList.add('show');
+            
+            if(type === 'error') {
+                icon.className = 'fas fa-exclamation-triangle mr-2 text-red-500';
+            } else {
+                icon.className = 'fas fa-check-circle mr-2 text-yellow-400';
+            }
+
+            setTimeout(() => {
+                alertBox.classList.remove('show');
+            }, 3500);
+        };
 
         // Inicializácia IndexedDB
         const initDB = () => {
@@ -264,11 +375,9 @@
 
                 request.onupgradeneeded = (event) => {
                     const database = event.target.result;
-                    // Tabuľka užívateľov
                     if (!database.objectStoreNames.contains("users")) {
                         database.createObjectStore("users", { keyPath: "email" });
                     }
-                    // Tabuľka objektov galérie
                     if (!database.objectStoreNames.contains("gallery")) {
                         const store = database.createObjectStore("gallery", { keyPath: "id", autoIncrement: true });
                         store.createIndex("userEmail", "userEmail", { unique: false });
@@ -284,9 +393,13 @@
             });
         };
 
-        // Funkcie rozhrania
+        // UI Funkcie
         window.openModal = () => document.getElementById('upload-modal').classList.remove('hidden');
-        window.closeModal = () => document.getElementById('upload-modal').classList.add('hidden');
+        window.closeModal = () => {
+            document.getElementById('upload-modal').classList.add('hidden');
+            document.getElementById('obj-title').value = '';
+            document.getElementById('obj-content').value = '';
+        };
         
         window.setUploadType = (type) => {
             uploadType = type;
@@ -302,12 +415,37 @@
             });
         };
 
-        // Autentifikačný systém (Lokálny)
-        window.handleAuth = async (mode) => {
-            const email = document.getElementById('auth-email').value.toLowerCase();
-            const pass = document.getElementById('auth-pass').value;
+        // Prepínanie Tabov Prihlásenia/Registrácie
+        window.switchAuthMode = (mode) => {
+            currentAuthMode = mode;
+            const tabLogin = document.getElementById('tab-login');
+            const tabRegister = document.getElementById('tab-register');
+            const btnSubmit = document.getElementById('auth-submit-btn');
 
-            if (!email || !pass) return alert("Zadajte prístupové údaje!");
+            if(mode === 'login') {
+                tabLogin.className = "flex-1 pb-3 text-sm font-bold cyber-font text-yellow-400 border-b-2 border-yellow-400 transition-colors";
+                tabRegister.className = "flex-1 pb-3 text-sm font-bold cyber-font text-gray-500 border-b-2 border-transparent hover:text-yellow-400/70 transition-colors";
+                btnSubmit.innerHTML = '<span>INICIALIZOVAŤ_SPOJENIE</span> <i class="fas fa-sign-in-alt ml-2"></i>';
+            } else {
+                tabRegister.className = "flex-1 pb-3 text-sm font-bold cyber-font text-yellow-400 border-b-2 border-yellow-400 transition-colors";
+                tabLogin.className = "flex-1 pb-3 text-sm font-bold cyber-font text-gray-500 border-b-2 border-transparent hover:text-yellow-400/70 transition-colors";
+                btnSubmit.innerHTML = '<span>VYTVORIŤ_LINKU</span> <i class="fas fa-user-plus ml-2"></i>';
+            }
+        };
+
+        // Wrapper pre volanie správneho módu
+        window.executeAuth = () => {
+            handleAuth(currentAuthMode);
+        };
+
+        // Autentifikačný systém
+        window.handleAuth = async (mode) => {
+            const emailInput = document.getElementById('auth-email');
+            const passInput = document.getElementById('auth-pass');
+            const email = emailInput.value.toLowerCase().trim();
+            const pass = passInput.value;
+
+            if (!email || !pass) return showCyberAlert("Zadajte prístupové údaje!", "error");
 
             const transaction = db.transaction(["users"], "readwrite");
             const store = transaction.objectStore("users");
@@ -315,23 +453,28 @@
             if (mode === 'register') {
                 const checkReq = store.get(email);
                 checkReq.onsuccess = () => {
-                    if (checkReq.result) return alert("Email už existuje!");
+                    if (checkReq.result) return showCyberAlert("Email sa už nachádza v databáze!", "error");
                     
                     const newUser = {
                         email,
-                        pass, // V reálnej app by tu bol hash
+                        pass,
                         registeredAt: Date.now(),
                         status: 'pending'
                     };
                     store.add(newUser);
-                    alert("Profil vytvorený! Prihláste sa.");
+                    showCyberAlert("Profil vytvorený! Môžete sa prihlásiť.", "success");
+                    
+                    // Po úspešnej registrácii prepneme späť na login a vymažeme heslo
+                    passInput.value = '';
+                    switchAuthMode('login');
                 };
             } else {
                 const getReq = store.get(email);
                 getReq.onsuccess = () => {
                     const user = getReq.result;
-                    if (!user || user.pass !== pass) return alert("Neplatné údaje!");
+                    if (!user || user.pass !== pass) return showCyberAlert("Neplatný kľúč alebo email!", "error");
                     
+                    showCyberAlert("Spojenie nadviazané.", "success");
                     currentUser = user;
                     localStorage.setItem('cyber_vault_session', email);
                     checkUserStatus(user);
@@ -396,7 +539,7 @@
         window.saveItem = () => {
             const title = document.getElementById('obj-title').value;
             const content = document.getElementById('obj-content').value;
-            if (!title || !content) return alert("Dáta chýbajú!");
+            if (!title || !content) return showCyberAlert("Dáta objektu chýbajú!", "error");
 
             const item = {
                 userEmail: currentUser.email,
@@ -409,6 +552,7 @@
             const tx = db.transaction(["gallery"], "readwrite");
             tx.objectStore("gallery").add(item);
             tx.oncomplete = () => {
+                showCyberAlert("Objekt uložený vo Vaulte.", "success");
                 closeModal();
                 loadGallery();
             };
@@ -416,7 +560,7 @@
 
         const loadGallery = () => {
             const grid = document.getElementById('gallery-grid');
-            grid.innerHTML = '<div class="col-span-full text-center py-10 opacity-30 cyber-font">Načítavam_Dáta...</div>';
+            grid.innerHTML = '<div class="col-span-full text-center py-10 opacity-50 cyber-font tracking-widest"><i class="fas fa-spinner fa-spin mr-2"></i> Načítavam_Dáta...</div>';
 
             const tx = db.transaction(["gallery"], "readonly");
             const store = tx.objectStore("gallery");
@@ -425,24 +569,24 @@
 
             req.onsuccess = () => {
                 const items = req.result.sort((a,b) => b.timestamp - a.timestamp);
-                grid.innerHTML = items.length === 0 ? '<div class="col-span-full text-center py-10 opacity-30 cyber-font">SEKTOR_PRÁZDNY</div>' : '';
+                grid.innerHTML = items.length === 0 ? '<div class="col-span-full text-center py-20 opacity-30 cyber-font text-2xl tracking-[5px] border border-yellow-400/20 bg-black/50">SEKTOR_PRÁZDNY</div>' : '';
                 
                 items.forEach(item => {
                     const div = document.createElement('div');
-                    div.className = 'gallery-card cyber-border overflow-hidden relative group';
+                    div.className = 'gallery-card cyber-border overflow-hidden relative group bg-[#0a0a0a]';
                     
                     let media = '';
-                    if(item.type === 'image') media = `<img src="${item.content}" class="w-full h-48 object-cover grayscale group-hover:grayscale-0">`;
-                    else if(item.type === 'video') media = `<div class="w-full h-48 bg-black flex items-center justify-center"><i class="fas fa-video text-3xl opacity-20"></i></div>`;
-                    else media = `<div class="w-full h-48 p-4 text-xs italic bg-white/5 overflow-hidden">"${item.content.substring(0,150)}..."</div>`;
+                    if(item.type === 'image') media = `<img src="${item.content}" class="w-full h-52 object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500">`;
+                    else if(item.type === 'video') media = `<div class="w-full h-52 bg-black flex items-center justify-center"><i class="fas fa-video text-4xl opacity-30 group-hover:text-yellow-400 transition-colors"></i></div>`;
+                    else media = `<div class="w-full h-52 p-6 text-sm text-white/70 italic bg-white/5 overflow-hidden font-medium leading-relaxed">"${item.content.substring(0,180)}..."</div>`;
 
                     div.innerHTML = `
                         ${media}
-                        <div class="p-4 bg-black/90 border-t border-yellow-400/20">
-                            <h3 class="font-bold text-sm truncate">${item.title}</h3>
-                            <div class="flex justify-between items-center mt-2">
-                                <span class="text-[9px] opacity-40">${new Date(item.timestamp).toLocaleDateString()}</span>
-                                <span class="text-[9px] px-2 bg-yellow-400 text-black font-black uppercase">${item.type}</span>
+                        <div class="p-5 bg-black border-t border-yellow-400/30 relative z-10">
+                            <h3 class="font-bold text-md truncate text-white tracking-wider">${item.title}</h3>
+                            <div class="flex justify-between items-center mt-3">
+                                <span class="text-[10px] opacity-50 font-bold tracking-widest text-white">${new Date(item.timestamp).toLocaleDateString()}</span>
+                                <span class="text-[10px] px-2 py-1 bg-yellow-400 text-black font-black uppercase tracking-widest rounded-sm">${item.type}</span>
                             </div>
                         </div>
                     `;
