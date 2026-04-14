@@ -178,7 +178,7 @@
                             <button onclick="setStorage('cloud')" id="btn-cloud" class="p-2 text-[10px] border border-yellow-400 text-yellow-400 font-bold opacity-50">CLOUD_DB (Firebase)</button>
                         </div>
                     </div>
-                    <button onclick="handleAuth()" class="cyber-button w-full mt-4 group">
+                    <button id="auth-submit-btn" onclick="handleAuth()" class="cyber-button w-full mt-4 group">
                         Iniciovať_Linku <i class="fas fa-arrow-right ml-2 group-hover:translate-x-2 transition-transform"></i>
                     </button>
                 </div>
@@ -322,19 +322,36 @@
 
         window.handleAuth = async () => {
             const email = document.getElementById('auth-email').value;
-            if (!email) return alert("Zadajte email!");
+            const pass = document.getElementById('auth-pass').value;
+            if (!email || !pass) return alert("Zadajte email a neurálny kľúč!");
             
-            // Simulácia registrácie/loginu cez Firestore profil
-            const uid = auth.currentUser.uid;
-            const regData = {
-                email,
-                storageMode,
-                registeredAt: Date.now(),
-                status: 'pending' // pending, verified, banned
-            };
+            const btn = document.getElementById('auth-submit-btn');
+            btn.innerText = "PRIPÁJANIE...";
+            btn.disabled = true;
 
-            await setDoc(doc(db, 'artifacts', appId, 'users', uid, 'profile', 'settings'), regData);
-            checkUserStatus(regData);
+            try {
+                // Zaistíme, že sme prihlásení anonymne pred zápisom do DB
+                if (!auth.currentUser) {
+                    await signInAnonymously(auth);
+                }
+                
+                const uid = auth.currentUser.uid;
+                const regData = {
+                    email,
+                    storageMode,
+                    registeredAt: Date.now(),
+                    status: 'pending' // pending, verified, banned
+                };
+
+                // Uložíme profil
+                await setDoc(doc(db, 'artifacts', appId, 'users', uid, 'profile', 'settings'), regData);
+                checkUserStatus(regData);
+            } catch (err) {
+                console.error(err);
+                alert("Chyba spojenia s Night City Net.");
+                btn.innerText = "INICIOVAŤ_LINKU";
+                btn.disabled = false;
+            }
         };
 
         window.logout = () => {
@@ -348,7 +365,11 @@
         const initIDB = () => {
             return new Promise((res) => {
                 const req = indexedDB.open("NC_Vault", 1);
-                req.onupgradeneeded = (e) => e.target.result.createObjectStore("items", { keyPath: "id", autoIncrement: true });
+                req.onupgradeneeded = (e) => {
+                    if (!e.target.result.objectStoreNames.contains("items")) {
+                        e.target.result.createObjectStore("items", { keyPath: "id", autoIncrement: true });
+                    }
+                };
                 req.onsuccess = () => res(req.result);
             });
         };
@@ -361,6 +382,7 @@
             const item = { title, content, type: uploadType, timestamp: Date.now() };
 
             if(storageMode === 'cloud') {
+                if (!auth.currentUser) return;
                 await addDoc(collection(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'gallery'), item);
             } else {
                 const idb = await initIDB();
@@ -372,17 +394,23 @@
             loadGallery();
         };
 
+        window.sendAppeal = () => {
+            const text = document.getElementById('appeal-text').value;
+            if (!text) return alert("Zadajte dôvod odvolania.");
+            alert("Odvolanie bolo odoslané administrátorom. Čakajte na spracovanie.");
+            document.getElementById('appeal-text').value = "";
+        };
+
         const loadGallery = async () => {
             const grid = document.getElementById('gallery-grid');
             grid.innerHTML = '<div class="col-span-full text-center py-10 opacity-30 cyber-font">Načítavam_Dáta...</div>';
             
-            let items = [];
             if(storageMode === 'cloud') {
+                if (!auth.currentUser) return;
                 const q = query(collection(db, 'artifacts', appId, 'users', auth.currentUser.uid, 'gallery'));
-                // Používame onSnapshot pre real-time v cloude
                 onSnapshot(q, (snap) => {
                     renderItems(snap.docs.map(d => ({...d.data(), id: d.id})));
-                });
+                }, (err) => console.error("Firestore error:", err));
             } else {
                 const idb = await initIDB();
                 const tx = idb.transaction("items", "readonly");
@@ -413,9 +441,6 @@
                             <span class="text-[9px] px-2 bg-yellow-400 text-black font-black uppercase">${item.type}</span>
                         </div>
                     </div>
-                    <div class="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button class="bg-red-600 text-white p-1 text-[10px]"><i class="fas fa-trash"></i></button>
-                    </div>
                 `;
                 grid.appendChild(div);
             });
@@ -423,7 +448,10 @@
 
         const checkUserStatus = (data) => {
             const views = ['auth', 'verification', 'banned', 'gallery'];
-            views.forEach(v => document.getElementById(`view-${v}`).classList.add('hidden-view'));
+            views.forEach(v => {
+                const el = document.getElementById(`view-${v}`);
+                if (el) el.classList.add('hidden-view');
+            });
             
             document.getElementById('user-info').classList.remove('hidden');
             document.getElementById('display-email').innerText = data.email;
@@ -448,24 +476,27 @@
                 
                 if(diff <= 0) {
                     clearInterval(timer);
-                    // Simulácia prechodu po 24h
-                    const isBot = Math.random() > 0.95; // 5% šanca na ban
+                    const isBot = Math.random() > 0.95; 
                     finalizeUser(isBot);
                 } else {
                     const h = Math.floor(diff / 3600000).toString().padStart(2, '0');
                     const m = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
                     const s = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
-                    document.getElementById('countdown').innerText = `${h}:${m}:${s}`;
+                    const cdEl = document.getElementById('countdown');
+                    if (cdEl) cdEl.innerText = `${h}:${m}:${s}`;
                     
-                    // Progress bar simulácia
-                    const elapsed = now - regTime;
-                    const total = 24 * 60 * 60 * 1000;
-                    document.querySelector('.loading-bar-fill').style.width = (elapsed/total * 100) + '%';
+                    const fillEl = document.querySelector('.loading-bar-fill');
+                    if (fillEl) {
+                        const elapsed = now - regTime;
+                        const total = 24 * 60 * 60 * 1000;
+                        fillEl.style.width = Math.min(100, (elapsed/total * 100)) + '%';
+                    }
                 }
             }, 1000);
         };
 
         const finalizeUser = async (isBot) => {
+            if (!auth.currentUser) return;
             const uid = auth.currentUser.uid;
             const status = isBot ? 'banned' : 'verified';
             await setDoc(doc(db, 'artifacts', appId, 'users', uid, 'profile', 'settings'), { status }, { merge: true });
@@ -474,14 +505,24 @@
 
         // Init App
         window.onload = async () => {
-            await signInAnonymously(auth);
+            // Skúsime tiché prihlásenie hneď pri štarte
+            try {
+                await signInAnonymously(auth);
+            } catch (e) {
+                console.warn("Anonymné prihlásenie pri štarte zlyhalo, skúsim neskôr.");
+            }
+
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
-                    const docSnap = await getDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'settings'));
-                    if (docSnap.exists()) {
-                        const data = docSnap.data();
-                        storageMode = data.storageMode;
-                        checkUserStatus(data);
+                    try {
+                        const docSnap = await getDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'profile', 'settings'));
+                        if (docSnap.exists()) {
+                            const data = docSnap.data();
+                            storageMode = data.storageMode;
+                            checkUserStatus(data);
+                        }
+                    } catch (err) {
+                        console.error("Chyba načítania profilu:", err);
                     }
                 }
             });
